@@ -1,8 +1,34 @@
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# configure SSH wrapper
+alias ssh=$HOME/tools/bin/sssh
+export PATH=$HOME/tools/bin:$PATH
 
-alias ssh=$HOME/sssh/sssh
 
+# check and configure proxy server
+proxy_host=www-proxy.us.oracle.com
+proxy_port=80
+proxy_protocol=http
+
+check_proxy () {
+	proxy_url="${proxy_protocol}://${proxy_host}:${proxy_port}"
+	echo "Looking for $proxy_host"
+	ping $proxy_host 1> /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		echo "Setting proxy $proxy_url"
+		export http_proxy=$proxy_url
+		export https_proxy=$proxy_url
+		export no_proxy=localhost,127.0.0.1,.oracle.com
+	else
+		echo "No proxy found."
+		unset http_proxy
+		unset https_proxy
+		unset no_proxy
+	fi
+}
+check_proxy
+
+
+# check and configure root certificates for local PCA X9
 set_root_cert () {
 	# configuration settings for OCI CLI
 	# export no_proxy=".skt-pca-9.au.oracle.com,$no_proxy"
@@ -10,5 +36,4 @@ set_root_cert () {
 	echo "Checking for ${CA_ROOT_CERT}"
 	[ -f $CA_ROOT_CERT ] && export OCI_CLI_CERT_BUNDLER=$CA_ROOT_CERT && export REQUESTS_CA_BUNDLE=$CA_ROOT_CERT && echo "... found."
 }
-set_root_cert
-
+# set_root_cert
