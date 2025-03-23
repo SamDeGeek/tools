@@ -37,3 +37,4 @@ set_root_cert () {
 	[ -f $CA_ROOT_CERT ] && export OCI_CLI_CERT_BUNDLER=$CA_ROOT_CERT && export REQUESTS_CA_BUNDLE=$CA_ROOT_CERT && echo "... found."
 }
 # set_root_cert
+
