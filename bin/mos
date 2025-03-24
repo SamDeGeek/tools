@@ -19,9 +19,9 @@ CURLCMD="/usr/bin/curl"
 
 # set proxy servers as required
 # examples below for OWAN
-export http_proxy=www-proxy.us.oracle.com:80
-export https_proxy=www-proxy.us.oracle.com:80
-export no_proxy=signon.oracle.com,signon-int.oracle.com,identity.oraclecloud.com
+# export http_proxy=www-proxy.us.oracle.com:80
+# export https_proxy=www-proxy.us.oracle.com:80
+# export no_proxy=signon.oracle.com,signon-int.oracle.com,identity.oraclecloud.com
 
 
 s () {
@@ -125,6 +125,15 @@ d () {
 }
 
 
+v () {
+        ls p*.zip | while read line; do
+                echo $line
+                unzip -t $line
+                [ $? -eq 0 ] && rm ${line}.log
+        done
+}
+
+
 case $1 in
     status)
         shift
@@ -137,6 +146,10 @@ case $1 in
     download)
         shift
         d $*
+        ;;
+    verify)
+        shift
+        v $*
         ;;
     *)
         echo "Unknown command: $1"

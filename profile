@@ -1,3 +1,6 @@
+# Add this line to your profile
+# [ -f $HOME/tools/profile ] && source $HOME/tools/profile
+
 
 # configure SSH wrapper
 alias ssh=$HOME/tools/bin/sssh
@@ -17,7 +20,7 @@ check_proxy () {
 		echo "Setting proxy $proxy_url"
 		export http_proxy=$proxy_url
 		export https_proxy=$proxy_url
-		export no_proxy=localhost,127.0.0.1,.oracle.com
+		export no_proxy=localhost,127.0.0.1,.oracle.com,.oraclecloud.com
 	else
 		echo "No proxy found."
 		unset http_proxy
