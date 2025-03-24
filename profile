@@ -20,7 +20,7 @@ check_proxy () {
 		echo "Setting proxy $proxy_url"
 		export http_proxy=$proxy_url
 		export https_proxy=$proxy_url
-		export no_proxy=localhost,127.0.0.1,.oracle.com,.oraclecloud.com
+		export no_proxy=localhost,127.0.0.1,signon.oracle.com,identity.oraclecloud.com
 	else
 		echo "No proxy found."
 		unset http_proxy
