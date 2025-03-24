@@ -41,3 +41,10 @@ set_root_cert () {
 }
 # set_root_cert
 
+set_git () {
+	git config --global name samktan
+	git config --global email samktan@gmail.com
+	git config --global credential.helper store
+}
+set_git
+
