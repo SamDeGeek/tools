@@ -8,14 +8,14 @@ export PATH=$HOME/tools/bin:$PATH
 
 
 # check and configure proxy server
-proxy_host=www-proxy.us.oracle.com
-proxy_port=80
-proxy_protocol=http
-
 check_proxy () {
+	proxy_host=www-proxy.au.oracle.com
+	proxy_port=80
+	proxy_protocol=http
+
 	proxy_url="${proxy_protocol}://${proxy_host}:${proxy_port}"
 	echo "Looking for $proxy_host"
-	ping $proxy_host 1> /dev/null 2>&1
+	ping -c 3 $proxy_host 1> /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 		echo "Setting proxy $proxy_url"
 		export http_proxy=$proxy_url
