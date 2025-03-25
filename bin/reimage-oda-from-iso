@@ -39,6 +39,8 @@ echo "Enter password for root@${ILOM}:"
 ssh -l root ${ILOM} << END_OF_INPUT
 
 show /SYS
+stop -f /SYS
+
 show /SP/services/kvms/host_storage_device
 show /SP/services/kvms/host_storage_device/remote
 
@@ -54,6 +56,8 @@ set /HOST boot_device=cdrom
 show /SP/services/kvms/host_storage_device/remote
 show /SP/services/kvms/host_storage_device
 show /HOST
+
+start /SYS
 
 END_OF_INPUT
 
