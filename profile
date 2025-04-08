@@ -8,10 +8,11 @@ export PATH=$HOME/tools/bin:$PATH
 
 
 # check and configure proxy server
-check_proxy () {
-	proxy_host=www-proxy.au.oracle.com
+set_proxy () {
+	proxy_host=www-proxy.us.oracle.com
 	proxy_port=80
 	proxy_protocol=http
+	[ $# -ge 1 ] && proxy_host="$1"
 
 	proxy_url="${proxy_protocol}://${proxy_host}:${proxy_port}"
 	echo "Looking for ${proxy_host}"
@@ -23,12 +24,13 @@ check_proxy () {
 		export no_proxy=localhost,127.0.0.1,signon.oracle.com,identity.oraclecloud.com
 	else
 		echo "No proxy found."
+		unset all_proxy
 		unset http_proxy
 		unset https_proxy
 		unset no_proxy
 	fi
 }
-check_proxy
+set_proxy
 
 
 # check and configure root certificates for local PCA X9
