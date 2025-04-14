@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "MOS Utility by sam.k.tan@oracle.com"
 if [[ $# -eq 0 ]]; then
