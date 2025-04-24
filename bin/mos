@@ -31,14 +31,19 @@ s1 () {
 
 
 s () {
-	echo "Status of moswget downloads based on *.log files ..."
 	wgetc=$(ps -C wget -o pid= | wc -l)
 	ps -C wget -o command | while read line; do
 		[[ $line =~ https://updates.oracle.com/Orion/Services/download/[^\ \"]+ ]] && echo "RUNNING: ${BASH_REMATCH[0]##*&}";
 	done;
-	printf "wget instances running: %d\n" ${wgetc}
+	if [ $wgetc -eq 0 ]; then
+		f=$(mktemp -t wget_sh_XXXXXX)
+		d=${f%/*}
+		printf "Removing unused cookie files in %s ...\n" "${d}"
+		echo rm ${d}/wget_sh_*
+	fi
+	printf "wget instances running: %d\n\n" ${wgetc}
 
-
+	printf "Status of moswget downloads based on *.log files ...\n\n"
 	for f in `ls *.zip.log`; do
 		# echo $f
 		name=$(basename $f '.log')
@@ -46,8 +51,7 @@ s () {
 		n=$(cat ${f} | grep '100%')
 		if [ $? -eq 0 ]; then
 			printf "DONE:  %s \n\n" ${name}
-		elif [ ${age} -gt 3600 ]
-		then
+		elif [ ${age} -gt 3600 ]; then
 			printf "STALLED:  %s\n\n" ${name}
 		else
 			printf "PROGRESS:  %s  (progress / bandwidth / time remaining)\n" ${name}
@@ -129,9 +133,7 @@ d () {
 		fi
 	done
 
-	# echo "Wait 20s the background processes to start ..."
-	# sleep 20
-	# Cleanup
+	# Cleanup - currently disabled as sometimes the cookies file is deleted before the background wget process has time to read it
 	# rm -f "$COOKIE_FILE"
 	# echo "Removed temporary cookie file $COOKIE_FILE" >> "$LOGFILE"
 }
