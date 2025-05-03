@@ -52,4 +52,4 @@ set_git () {
 	git config --global user.email samktan@gmail.com
 	git config --global credential.helper store
 }
-set_git
+# set_git
