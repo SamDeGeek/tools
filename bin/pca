@@ -1,0 +1,34 @@
+#!/bin/sh
+
+OCI=$(which oci)
+if [ -z ${OCI} ]; then
+    printf "Unable to locate OCI CLI on PATH. Please install OCI CLI and try again.\n"
+    exit 1
+fi
+printf "Running OCI CLI at %s %s\n" "${OCI}" "$(${OCI} --version)"
+
+JQ=$(which jq)
+if [ -z ${JQ} ]; then
+    printf "Unable to locate JQ on the PATH. Please install JQ and try again.\n"
+    exit 1
+fi
+printf "Running jq at %s %s\n" "${JQ}" "$(${JQ} --version)"
+
+PROFILES="$(cat ~/.oci/config | egrep '\[(.*)\]' | sed -e 's/\[//g' -e 's/\]//g')"
+if [ ${#PROFILES[@]} -gt > 1 ]; then
+    PS3="Select profile to use [Ctrl-C to quit]: "
+    select PROFILE in ${PROFILES[@]}; do
+        [ -z ${PROFILE} ] && exit 1
+        break
+    done
+else
+    PROFILE=${PROFILES[0]}
+fi
+printf "Using profile %s\n" "${PROFILE}"
+
+proxy_count=$(env | cut -d '=' -f1 | egrep '_proxy' | wc -l)
+if [ $proxy_count -gt 0 ]; then
+    printf "WARNING: Proxy variables are set. Using a proxy can interfere with the OCI CLI.\n"
+fi
+
+${OCI} --profile ${PROFILE} iam user list | ${JQ} '.data.[].name'
