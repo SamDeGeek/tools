@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo "MOS Verify by sam.k.tan@oracle.com"
+
+
+WGETCMD=$(which wget)
+CURLCMD=$(which curl)
+
+
+# verify downloaded patch files and unzip into corresponding directory
+
+CWD=$(pwd)
+for n in `ls p*.zip`; do
+	echo "CHECK ... $n"
+	if [[ $n =~ (p.*)(_[0-9]{1,2}of[0-9]{1,2})\.zip ]]; then
+		d=${BASH_REMATCH[1]}
+	else
+		d=${n%.zip}
+	fi
+	echo "UNPACK TO $d"
+	mkdir -p $d
+	cd $d
+	unzip ../$n
+	cd $CWD
+	[[ $? -eq 0 ]] && rm ${n}.log
+done

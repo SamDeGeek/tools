@@ -1,0 +1,55 @@
+#!/bin/sh
+
+OCI=$(which oci)
+if [ -z ${OCI} ]; then
+    printf "Unable to locate OCI CLI on PATH. Please install OCI CLI and try again.\n"
+    exit 1
+fi
+printf "Running OCI CLI at %s %s\n" "${OCI}" "$(${OCI} --version)"
+
+JQ=$(which jq)
+if [ -z ${JQ} ]; then
+    printf "Unable to locate JQ on the PATH. Please install JQ and try again.\n"
+    exit 1
+fi
+printf "Running jq at %s %s\n" "${JQ}" "$(${JQ} --version)"
+
+profile () {
+    PROFILES="$(cat ~/.oci/config | egrep '\[(.*)\]' | sed -e 's/\[//g' -e 's/\]//g')"
+    PS3="Select profile to use [Ctrl-C to quit]: "
+    select P in ${PROFILES[@]}; do
+        [ -z ${P} ] && exit 1
+        break
+    done
+    echo $P
+}
+P=$(profile)
+printf "Using profile %s\n" "${P}"
+
+
+proxy () {
+    proxy_count=$(env | cut -d '=' -f1 | egrep '_proxy' | wc -l)
+    if [ $proxy_count -gt 0 ]; then
+        printf "WARNING: Proxy variables are set. Using a proxy can interfere with the OCI CLI.\n"
+    fi
+}
+proxy
+
+
+compartment () {
+    P=$1
+    COMPARTMENTS="$(${OCI} --profile ${P} iam compartment list --include-root --compartment-id-in-subtree true | ${JQ} --raw-output ".data | .[] | .id")"
+    echo ${COMPARTMENTS[@]}
+    PS3="Select compartment to use [Ctrl-C to quit]: "
+    select C in ${COMPARTMENTS[@]}; do
+        [ -z ${C} ] && exit 1
+        break
+    done
+    echo $C
+}
+C=$(compartment $P)
+printf "Using compartment %s\n" "${C}"
+
+
+${OCI} --profile ${P} iam user list | ${JQ} --raw-output ".data | .[] | .name,.id" | paste - -
+
