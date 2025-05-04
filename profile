@@ -4,7 +4,7 @@
 
 # configure SSH wrapper
 alias ssh=$HOME/tools/bin/sssh
-export PATH=$HOME/tools/bin:$PATH
+export PATH=$HOME/tools:$PATH
 
 
 # check and configure proxy server
