@@ -2,10 +2,7 @@
 
 echo "MOS Upload by sam.k.tan@oracle.com"
 
-
-WGETCMD=$(which wget)
 CURLCMD=$(which curl)
-
 
 # upload a file to MOS for the given SR number
 

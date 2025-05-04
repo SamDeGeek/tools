@@ -2,11 +2,6 @@
 
 echo "MOS Verify by sam.k.tan@oracle.com"
 
-
-WGETCMD=$(which wget)
-CURLCMD=$(which curl)
-
-
 # verify downloaded patch files and unzip into corresponding directory
 
 CWD=$(pwd)

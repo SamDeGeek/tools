@@ -2,9 +2,6 @@
 
 echo "MOS Status by sam.k.tan@oracle.com"
 
-WGETCMD=$(which wget)
-CURLCMD=$(which curl)
-
 
 s1 () {
 	# ps -C wget -o pid= | while read n; do echo $n; realpath /proc/${n}/cwd; cat /proc/${n}/cmdline | sed 's/\x0/ /g'; echo; done;

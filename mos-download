@@ -3,8 +3,6 @@
 echo "MOS Download by sam.k.tan@oracle.com"
 
 WGETCMD=$(which wget)
-CURLCMD=$(which curl)
-
 
 # download a collection of URL from MOS
 
