@@ -3,7 +3,7 @@
 
 
 # configure SSH wrapper
-alias ssh=$HOME/tools/bin/sssh
+alias ssh=$HOME/tools/sssh
 export PATH=$HOME/tools:$PATH
 
 

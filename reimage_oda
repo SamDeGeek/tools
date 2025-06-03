@@ -29,7 +29,7 @@ printf "Proceed? [YES or cancel]: "
 read ACK
 
 if [ "${ACK}" != "YES" ]; then
-	echo "Canceled."
+	echo "Cancelled."
 	exit 1
 fi
 
