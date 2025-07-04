@@ -1,14 +1,19 @@
 #!/bin/sh
 
+# check that the ILOM hostname or IP is provided
 if [ -z $1 ]; then
 	echo "Usage: ${0##*/} <ilom-hostname-or-IP>"
 	exit 1
 fi
 
+# store the ILOM hostname or IP
 ILOM=$1
+
+# specify the folder to search for ISO files
 ISO_FOLDER=${HOME}/public_html/mos_repo
 
 cd ${ISO_FOLDER}
+# display a list of found ISO files that are NOT ODA ISO files
 PS3="Select ISO file [Ctrl-C to quit]: "
 ISO_FILES=$(find . -name '*.iso' -and -not -name 'oda_bm_*.iso' -print | sort)
 select ISO in ${ISO_FILES[@]}; do
@@ -17,14 +22,18 @@ select ISO in ${ISO_FILES[@]}; do
 	break
 done
 
+# display the ILOM details and the ISO file path
 echo "ILOM: ${ILOM}"
 echo "ISO: ${ISO_PATH}"
 
+# store the login ID for a user that can access the ISO file
 SSHFS_USER="software"
 SSHFS_PASS="Welcome1"
+# construct and display the URL to the ISO file
 SSHFS_URL="sshfs://10.187.101.235:${ISO_PATH}"
 echo "SSHFS: ${SSHFS_URL}"
 
+# confirm
 printf "Proceed? [YES or cancel]: "
 read ACK
 
@@ -35,6 +44,11 @@ fi
 
 
 # THE POINT OF NO RETURN
+# login to the ILOM
+# power off the server
+# configure the ILOM storage device redirect
+# set the boot device to the remote boot device
+# power on the server
 echo "Enter password for root@${ILOM}:"
 ssh -l root ${ILOM} << END_OF_INPUT
 
@@ -64,5 +78,4 @@ y
 END_OF_INPUT
 
 
-echo "${ILOM} ready to be re-imaged. Run 'cleanup.pl' to erase data on shared storage."
-
+echo "Server with ILOM ${ILOM} has been re-imaged."
