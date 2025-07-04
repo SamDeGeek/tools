@@ -23,12 +23,19 @@ echo "Created temporary cookie file $COOKIE_FILE" >> "$LOGFILE"
 
 # The following command to authenticate uses HTTPS. This will work only if the wget in the environment
 # where this script will be executed was compiled with OpenSSL. 
-#
+
 # SSO username
 printf 'SSO Username: '
 read SSO_USERNAME < /dev/tty
 printf 'SSO Password: '
-${WGETCMD}	--secure-protocol=auto --save-cookies="$COOKIE_FILE" --keep-session-cookies	 --http-user "$SSO_USERNAME" --ask-password	 "https://updates.oracle.com/Orion/Services/download" -O /dev/null 2>> "$LOGFILE"
+${WGETCMD} \
+	--secure-protocol=auto \
+	--save-cookies="$COOKIE_FILE" \
+	--keep-session-cookies \
+	--http-user "$SSO_USERNAME" \
+	--ask-password \
+	"https://updates.oracle.com/Orion/Services/download" \
+	-O /dev/null 2>> "$LOGFILE"
 
 # Verify if authentication is successful
 if [ $? -ne 0 ]; then
@@ -57,7 +64,12 @@ while IFS='' read inputline; do
 		else
 			echo "Downloading $patchfile from $url" >> $LOGFILE
 			echo "Downloading $patchfile ..."
-			${WGETCMD} --background --load-cookies="$COOKIE_FILE" "$url" -O "$OUTPUT_DIR/$patchfile" -o "$OUTPUT_DIR/${patchfile}.log" >> "$LOGFILE" 2>&1 
+			${WGETCMD} \
+				--background \
+				--load-cookies="$COOKIE_FILE" \
+				"$url" \
+				-O "$OUTPUT_DIR/$patchfile" \
+				-o "$OUTPUT_DIR/${patchfile}.log" >> "$LOGFILE" 2>&1 
 		fi
 		echo "Next URL ... (Ctrl-D when done)"
 	fi
