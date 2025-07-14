@@ -36,7 +36,7 @@ echo "${SSSH} Only YES is accepted, any other key to cancel."
 read RESPONSE
 
 # if user entered anything other than YES
-[ "x${RESPONSE}x" != "xYESx" ] && return 255
+[ "x${RESPONSE}x" != "xYESx" ] && exit 255
 
 # remove the existing host keys
 echo "${SSSH} Removing offending keys ..."
