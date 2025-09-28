@@ -20,10 +20,13 @@ done
 echo "ILOM: ${ILOM}"
 echo "ISO: ${ISO_PATH}"
 
-SSHFS_USER="software"
-SSHFS_PASS="Welcome1"
-SSHFS_URL="sshfs://10.187.101.235:${ISO_PATH}"
-echo "SSHFS: ${SSHFS_URL}"
+# SSHFS_USER="software"
+# SSHFS_PASS="Welcome1"
+# SSHFS_URL="sshfs://10.187.101.235:${ISO_PATH}"
+# echo "SSHFS: ${SSHFS_URL}"
+
+NFS_URL="nfs://10.187.101.25:${ISO_PATH}"
+echo "NFS: ${NFS_URL}"
 
 printf "Proceed? [YES or cancel]: "
 read ACK
@@ -36,7 +39,7 @@ fi
 
 # THE POINT OF NO RETURN
 echo "Enter password for root@${ILOM}:"
-ssh -l root ${ILOM} << END_OF_INPUT
+ssh -t -l root ${ILOM} << END_OF_INPUT
 
 show /SYS
 stop -f /SYS
@@ -46,11 +49,7 @@ show /SP/services/kvms/host_storage_device
 show /SP/services/kvms/host_storage_device/remote
 
 set /SP/services/kvms/host_storage_device mode=disabled
-set /SP/services/kvms/host_storage_device/remote server_uri=${SSHFS_URL}
-set /SP/services/kvms/host_storage_device/remote username=${SSHFS_USER}
-set /SP/services/kvms/host_storage_device/remote password
-${SSHFS_PASS}
-${SSHFS_PASS}
+set /SP/services/kvms/host_storage_device/remote server_uri=${NFS_URL}
 set /SP/services/kvms/host_storage_device mode=remote
 set /HOST boot_device=cdrom
 
@@ -66,3 +65,9 @@ END_OF_INPUT
 
 echo "${ILOM} ready to be re-imaged. Run 'cleanup.pl' to erase data on shared storage."
 
+# Alternative option using SSHFS
+# set /SP/services/kvms/host_storage_device/remote server_uri=${SSHFS_URL}
+# set /SP/services/kvms/host_storage_device/remote username=${SSHFS_USER}
+# set /SP/services/kvms/host_storage_device/remote password
+# ${SSHFS_PASS}
+# ${SSHFS_PASS}

@@ -53,3 +53,9 @@ set_git () {
 	git config --global credential.helper store
 }
 # set_git
+
+set_tmux () {
+	TMUXCMD="`which tmux`"
+	[ -z ${TMUX} ] && [ -x ${TMUXCMD} ] && ${TMUXCMD} new -A -s default
+}
+# set_tmux
