@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "MOS Upload by sam.k.tan@oracle.com"
+
+CURLCMD=$(which curl)
+
+# upload a file to MOS for the given SR number
+
+printf "File: "; read f;
+p=$(realpath "${f}");
+[ ! -f "${p}" ] && echo "Not a file." && return 1;
+printf "SR: "; read s;
+printf "Login: "; read l;
+u="https://transport.oracle.com/upload/issue/${s}/";
+${CURLCMD} --verbose --progress-bar --user ${l} --upload-file "${p}" ${u};

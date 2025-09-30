@@ -1,0 +1,69 @@
+#!/bin/sh
+
+if [ -z $1 ]; then
+	echo "Usage: ${0##*/} <ilom-hostname-or-IP>"
+	exit 1
+fi
+
+ILOM=$1
+ISO_FOLDER=${HOME}/public_html/mos_repo
+
+cd ${ISO_FOLDER}
+PS3="Select ISO file [Ctrl-C to quit]: "
+ISO_FILES=$(find . -name 'oda_bm_*.iso' -print | sort)
+select ISO in ${ISO_FILES[@]}; do
+	[ -z ${ISO} ] && exit 1
+	ISO_PATH=$(realpath ${ISO})
+	break
+done
+
+echo "ILOM: ${ILOM}"
+echo "ISO: ${ISO_PATH}"
+
+HOSTIP=$(hostname -I | cut -d' ' -f1)
+
+SSHFS_USER="software"
+SSHFS_PASS="Welcome1"
+SSHFS_URL="sshfs://${HOSTIP}:${ISO_PATH}"
+echo "SSHFS: ${SSHFS_URL}"
+
+NFS_URL="nfs://${HOSTIP}:${ISO_PATH}"
+echo "NFS: ${NFS_URL}"
+
+printf "Proceed? [YES or cancel]: "
+read ACK
+
+if [ "${ACK}" != "YES" ]; then
+	echo "Cancelled."
+	exit 1
+fi
+
+
+# THE POINT OF NO RETURN
+echo "Enter password for root@${ILOM}:"
+ssh -l root ${ILOM} << END_OF_INPUT
+
+show /SYS
+stop -f /SYS
+y
+
+show /SP/services/kvms/host_storage_device
+show /SP/services/kvms/host_storage_device/remote
+
+set /SP/services/kvms/host_storage_device mode=disabled
+set /SP/services/kvms/host_storage_device/remote server_uri=${NFS_URL}
+set /SP/services/kvms/host_storage_device mode=remote
+set /HOST boot_device=cdrom
+
+show /SP/services/kvms/host_storage_device/remote
+show /SP/services/kvms/host_storage_device
+show /HOST
+
+start /SYS
+y
+
+END_OF_INPUT
+
+
+echo "${ILOM} ready to be re-imaged. Run '/opt/oracle/oak/onecmd/cleanup.pl' to erase data on shared storage."
+

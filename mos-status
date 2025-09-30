@@ -1,0 +1,51 @@
+#!/bin/sh
+
+echo "MOS Status by sam.k.tan@oracle.com"
+
+
+s1 () {
+	# ps -C wget -o pid= | while read n; do echo $n; realpath /proc/${n}/cwd; cat /proc/${n}/cmdline | sed 's/\x0/ /g'; echo; done;
+	for n in $(ps -C wget -o pid=); do
+		echo "PID: ${n}"
+		cwd=$(realpath /proc/${n}/cwd)
+		cmdargs=$(cat /proc/${n}/cmdline | sed 's/\x0/ /g')
+		if [[ ${cmdargs} =~ -O\ (.+)\ -o\ (.+) ]]; then
+			patchfile=${BASH_REMATCH[1]}
+			logfile=${BASH_REMATCH[2]}
+		fi
+		echo ${cwd}
+		echo ${cmdargs}
+		echo ${patchfile}
+		echo ${logfile}
+	done
+}
+
+
+wgetc=$(ps -C wget -o pid= | wc -l)
+ps -C wget -o command | while read line; do
+	[[ $line =~ https://updates.oracle.com/Orion/Services/download/[^\ \"]+ ]] && echo "RUNNING: ${BASH_REMATCH[0]##*&}";
+done;
+if [ $wgetc -eq 0 ]; then
+	f=$(mktemp -t wget_sh_XXXXXX)
+	d=${f%/*}
+	printf "Removing unused cookie files in %s ...\n" "${d}"
+	echo rm ${d}/wget_sh_*
+fi
+printf "wget instances running: %d\n\n" ${wgetc}
+
+printf "Status of moswget downloads based on *.log files ...\n\n"
+for f in `ls *.zip.log`; do
+	# echo $f
+	name=$(basename $f '.log')
+	age=$(($(date +%s) - $(date -r "$f" +%s)))
+	n=$(cat ${f} | grep '100%')
+	if [ $? -eq 0 ]; then
+		printf "DONE:  %s \n\n" ${name}
+	elif [ ${age} -gt 3600 ]; then
+		printf "STALLED:  %s\n\n" ${name}
+	else
+		printf "PROGRESS:  %s  (progress / bandwidth / time remaining)\n" ${name}
+		cat ${f} | grep '%' | tail -1
+		printf "\n"
+	fi
+done
