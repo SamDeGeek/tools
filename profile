@@ -55,7 +55,7 @@ set_git () {
 # set_git
 
 set_tmux () {
-	TMUXCMD="`which tmux`"
-	[ -z ${TMUX} ] && [ -x ${TMUXCMD} ] && ${TMUXCMD} new -A -s default
+	TMUXCMD="$(which tmux)"
+	[ -z "${TMUX}" ] && [ -x "${TMUXCMD}" ] && ${TMUXCMD} new -A -s default
 }
 set_tmux
