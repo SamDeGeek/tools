@@ -1,0 +1,23 @@
+# odacli completions for bash
+# Created by sam.k.tan@oracle.com - September 2025
+# To install: save the file as `/etc/bash_completion.d/odacli`, then re-login.
+
+_odacli () {
+	current="$2"
+	previous="$3"
+	words=""
+
+	if [ "${previous}" == "odacli" ]; then
+		[ -z "$odacli_" ] && odacli_="$(odacli --help | grep -o -E '^[[:space:]]+[a-z-]+$' | sort | uniq | xargs)"
+		words="${odacli_}"
+	elif [[ "${odacli_}" =~ ${previous} ]]; then
+		varname=$(echo "odacli_$previous" | sed -s 's/-/_/g')
+		[ -z "${!varname}" ] && declare -g ${varname}="$(odacli ${previous} --help | grep -o -E '[[:space:]]+--[a-z-]+,' | sed -s 's/,//g' | xargs)"
+		words="${!varname}"
+	fi
+
+	COMPREPLY=($(compgen -W "$words" -- ${current}))
+	return 0
+}
+
+complete -o bashdefault -o default -F _odacli odacli
