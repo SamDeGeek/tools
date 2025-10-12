@@ -1,0 +1,47 @@
+#!/bin/sh
+
+LOGFILE="./pca-explorer-log-$(date +%Y-%m-%dT%H:%M:%S).log"
+echo "Writing to log file $LOGFILE"
+
+OCI=$(which oci)
+if [ -z ${OCI} ]; then
+    printf "Unable to locate OCI CLI on PATH. Please install OCI CLI and try again.\n"
+    exit 1
+fi
+printf "Running OCI CLI at %s %s\n" "${OCI}" "$(${OCI} --version)"
+
+JQ=$(which jq)
+if [ -z ${JQ} ]; then
+    printf "Unable to locate JQ on the PATH. Please install JQ and try again.\n"
+    exit 1
+fi
+printf "Running jq at %s %s\n" "${JQ}" "$(${JQ} --version)"
+
+
+PROFILES="$(cat ~/.oci/config | egrep '\[(.*)\]' | sed -e 's/\[//g' -e 's/\]//g')"
+PS3="Select profile to use [Ctrl-C to quit]: "
+select P in ${PROFILES[@]}; do
+    [ -z ${P} ] && exit 1
+    break
+done
+printf "Using profile %s\n" "${P}"
+
+
+proxy_count=$(env | cut -d '=' -f1 | egrep '_proxy' | wc -l)
+if [ $proxy_count -gt 0 ]; then
+    printf "WARNING: Proxy variables are set. Using a proxy can interfere with the OCI CLI.\n"
+fi
+
+
+compartment () {
+    ${OCI} --profile ${P} iam compartment get --compartment-id ${C} | ${JQ} --raw-output ".data | .name,.id" | paste -d":" - -
+    ${OCI} --profile ${P} compute instance list --compartment-id ${C} | ${JQ} --raw-output '.data | .[] | ."display-name",.id' | paste -d":" - -
+    ${OCI} --profile ${P} network vcn list --compartment-id ${C} | ${JQ} --raw-output '.data | .[] | ."display-name",.id' | paste -d":" - -
+    ${OCI} --profile ${P} network subnet list --compartment-id ${C} | ${JQ} --raw-output '.data | .[] | ."display-name",.id' | paste -d":" - -
+}
+
+
+${OCI} --profile ${P} iam compartment list --include-root --compartment-id-in-subtree true | ${JQ} --raw-output ".data | .[] | .id" | while read C; do
+    compartment
+
+done | tee ${LOGFILE}
