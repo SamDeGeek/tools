@@ -47,10 +47,7 @@ set_root_cert () {
 # set_root_cert
 
 
-<<<<<<< HEAD
-=======
 # set git user information
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 set_git () {
 	git config --global user.name samktan
 	git config --global user.email samktan@gmail.com
@@ -58,14 +55,7 @@ set_git () {
 }
 # set_git
 
-<<<<<<< HEAD
-set_tmux () {
-	TMUXCMD=`which tmux`
-	[ -z ${TMUX} ] && [ -x ${TMUXCMD} ] && ${TMUXCMD} new -A -s default
-}
-# set_tmux
 
-=======
 # check for tmux and if not already in a tmux session
 set_tmux () {
 	TMUXCMD="$(which tmux)"
@@ -73,10 +63,10 @@ set_tmux () {
 }
 set_tmux
 
+
 # check for odacli command and set completions
 set_odacli () {
 	ODACLI="$(which odacli)"
 	[ -x "${ODACLI}" ] && source ./odacli
 }
 set_odacli
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
