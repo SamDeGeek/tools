@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Basic network connectivity test
+# sam.k.tan@oracle.com 2025-10-23
+
+t () {
+    echo -n $1 $2 "= "
+    ping -c 3 $2 1> /dev/null 2>&1
+    [ $? -eq 0 ] && echo "PASS" || echo "FAIL"
+}
+
+# check local address
+echo "If there is at least one PASS, then you have a local network connection."
+scutil --nwi | grep -i address | cut -d':' -f2- | sed 's/ //g' | sort | uniq | grep -v ":" | while read line; do
+    t "HOST IP:" $line
+done
+
+# check local router
+# echo "If you are on VPN, these will fail, otherwise at least one of these should PASS."
+# netstat -rn | grep -i default | sed 's/  */ /g' | cut -d' ' -f2 | grep '\.' | while read line; do
+#     t "Router IP:" $line
+# done
+
+# check DNS servers
+# scutil --dns | grep -i nameserver | cut -d':' -f2- | sed 's/ //g' | sort | uniq | grep -v ":" | while read line; do
+#     t "DNS IP:" $line
+# done
+
+# check known good public hosts
+echo "If there is at least one PASS, then you have a valid internet connection and you are NOT on VPN."
+public_hosts=("8.8.8.8 8.8.4.4 1.1.1.1 1.0.0.1 www.google.com www.apple.com")
+for line in $public_hosts; do
+    t "Public IP:" $line
+done
+
+# check known OWAN hosts
+echo "If there is at least one PASS, then you have a valid internet connection and you ARE on VPN."
+owan_hosts=("10.68.69.53 10.254.203.53 10.187.64.11 10.167.142.228 140.83.65.12 www-proxy.us.oracle.com gdsntp.us.oracle.com")
+for line in $owan_hosts; do
+    t "OWAN IP:" $line
+done
+
+echo "Done."
