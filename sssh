@@ -9,7 +9,7 @@ PARAMS="$*"
 # get the paths to the executables
 SSH=$(which ssh)
 SSHKEYGEN=$(which ssh-keygen)
-SSSH="::::"
+SSSH="SKT:"
 
 # print a banner message
 echo "${SSSH} Sam's SSH Wrapper by sam.k.tan@oracle.com"
