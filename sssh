@@ -9,7 +9,7 @@ PARAMS="$*"
 # get the paths to the executables
 SSH=$(which ssh)
 SSHKEYGEN=$(which ssh-keygen)
-SSSH="::::"
+SSSH="SKT:"
 
 # print a banner message
 echo "${SSSH} Sam's SSH Wrapper by sam.k.tan@oracle.com"
@@ -36,11 +36,7 @@ echo "${SSSH} Only YES is accepted, any other key to cancel."
 read RESPONSE
 
 # if user entered anything other than YES
-<<<<<<< HEAD
-[ "x${RESPONSE}x" != "xYESx" ] && return 255
-=======
 [ "x${RESPONSE}x" != "xYESx" ] && exit 255
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 
 # remove the existing host keys
 echo "${SSSH} Removing offending keys ..."
@@ -49,4 +45,5 @@ ${SSHKEYGEN} -R ${HOST}
 # retry the SSH command with the given parameters
 echo "${SSSH} Retrying SSH ..."
 ${SSH} ${PARAMS}
+
 

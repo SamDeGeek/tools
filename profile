@@ -52,6 +52,8 @@ set_git () {
 	git config --global user.name samktan
 	git config --global user.email samktan@gmail.com
 	git config --global credential.helper store
+	git config --global push.default simple
+
 }
 # set_git
 

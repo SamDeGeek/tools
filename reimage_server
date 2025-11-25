@@ -1,20 +1,11 @@
 #!/bin/sh
 
-<<<<<<< HEAD
-=======
 # check that the ILOM hostname or IP is provided
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 if [ -z $1 ]; then
 	echo "Usage: ${0##*/} <ilom-hostname-or-IP>"
 	exit 1
 fi
 
-<<<<<<< HEAD
-ILOM=$1
-ISO_FOLDER=${HOME}/public_html/mos_repo
-
-cd ${ISO_FOLDER}
-=======
 # store the ILOM hostname or IP
 ILOM=$1
 
@@ -23,7 +14,6 @@ ISO_FOLDER=${HOME}/public_html/mos_repo
 
 cd ${ISO_FOLDER}
 # display a list of found ISO files that are NOT ODA ISO files
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 PS3="Select ISO file [Ctrl-C to quit]: "
 ISO_FILES=$(find . -name '*.iso' -and -not -name 'oda_bm_*.iso' -print | sort)
 select ISO in ${ISO_FILES[@]}; do
@@ -32,32 +22,18 @@ select ISO in ${ISO_FILES[@]}; do
 	break
 done
 
-<<<<<<< HEAD
 echo "ILOM: ${ILOM}"
 echo "ISO: ${ISO_PATH}"
 
 SSHFS_USER="software"
 SSHFS_PASS="Welcome1"
-SSHFS_URL="sshfs://10.187.101.235:${ISO_PATH}"
+SSHFS_URL="sshfs://10.187.101.25:${ISO_PATH}"
 echo "SSHFS: ${SSHFS_URL}"
 
-NFS_URL="nfs://10.187.101.235:${ISO_PATH}"
+NFS_URL="nfs://10.187.101.25:${ISO_PATH}"
 echo "NFS: ${NFS_URL}" 
 
-=======
-# display the ILOM details and the ISO file path
-echo "ILOM: ${ILOM}"
-echo "ISO: ${ISO_PATH}"
-
-# store the login ID for a user that can access the ISO file
-SSHFS_USER="software"
-SSHFS_PASS="Welcome1"
-# construct and display the URL to the ISO file
-SSHFS_URL="sshfs://10.187.101.235:${ISO_PATH}"
-echo "SSHFS: ${SSHFS_URL}"
-
 # confirm
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 printf "Proceed? [YES or cancel]: "
 read ACK
 
@@ -66,16 +42,20 @@ if [ "${ACK}" != "YES" ]; then
 	exit 1
 fi
 
+# USE THESE LINES FOR SSHFS
+# set /SP/services/kvms/host_storage_device/remote server_uri=${SSHFS_URL}
+# set /SP/services/kvms/host_storage_device/remote username=${SSHFS_USER}
+# set /SP/services/kvms/host_storage_device/remote password
+# ${SSHFS_PASS}
+# ${SSHFS_PASS}
+
 
 # THE POINT OF NO RETURN
-<<<<<<< HEAD
-=======
 # login to the ILOM
 # power off the server
 # configure the ILOM storage device redirect
 # set the boot device to the remote boot device
 # power on the server
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
 echo "Enter password for root@${ILOM}:"
 ssh -l root ${ILOM} << END_OF_INPUT
 
@@ -87,15 +67,8 @@ show /SP/services/kvms/host_storage_device
 show /SP/services/kvms/host_storage_device/remote
 
 set /SP/services/kvms/host_storage_device mode=disabled
-<<<<<<< HEAD
 set /SP/services/kvms/host_storage_device/remote server_uri=${NFS_URL}
-=======
-set /SP/services/kvms/host_storage_device/remote server_uri=${SSHFS_URL}
-set /SP/services/kvms/host_storage_device/remote username=${SSHFS_USER}
-set /SP/services/kvms/host_storage_device/remote password
-${SSHFS_PASS}
-${SSHFS_PASS}
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
+
 set /SP/services/kvms/host_storage_device mode=remote
 set /HOST boot_device=cdrom
 
@@ -108,10 +81,5 @@ y
 
 END_OF_INPUT
 
-
-<<<<<<< HEAD
-echo "${ILOM} ready to be re-imaged. Run 'cleanup.pl' to erase data on shared storage."
-
-=======
 echo "Server with ILOM ${ILOM} has been re-imaged."
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
+
