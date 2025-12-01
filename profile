@@ -8,7 +8,7 @@ export PATH=$HOME/tools:$PATH
 
 
 # check and configure proxy server
-set_proxy () {
+ proxy_ () {
 	proxy_host=www-proxy.us.oracle.com
 	proxy_port=80
 	proxy_protocol=http
@@ -30,11 +30,11 @@ set_proxy () {
 		unset no_proxy
 	fi
 }
-set_proxy
+ proxy_
 
 
 # check and configure root certificates for local PCA X9
-set_root_cert () {
+rootcert_ () {
 	CA_ROOT_CERT="${HOME}/.oci/pcax9.cert"
 	echo "Checking for ${CA_ROOT_CERT}"
 	if [ -f ${CA_ROOT_CERT} ]; then
@@ -44,31 +44,31 @@ set_root_cert () {
 		export no_proxy=".skt-pca-9.au.oracle.com,${no_proxy}"
 	fi
 }
-# set_root_cert
+rootcert_
 
 
 # set git user information
-set_git () {
+git_ () {
 	git config --global user.name samktan
 	git config --global user.email samktan@gmail.com
 	git config --global credential.helper store
 	git config --global push.default simple
 
 }
-# set_git
+git_
 
 
 # check for tmux and if not already in a tmux session
-set_tmux () {
+tmux_ () {
 	TMUXCMD="$(which tmux)"
 	[ -z "${TMUX}" ] && [ -x "${TMUXCMD}" ] && ${TMUXCMD} new -A -s default
 }
-set_tmux
+tmux_
 
 
 # check for odacli command and set completions
-set_odacli () {
+odacli_ () {
 	ODACLI="$(which odacli)"
 	[ -x "${ODACLI}" ] && source ./odacli
 }
-set_odacli
+odacli_
