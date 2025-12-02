@@ -2,19 +2,6 @@
 
 echo "MOS Upload by sam.k.tan@oracle.com"
 
-<<<<<<< HEAD
-CURLCMD=$(which curl)
-
-# upload a file to MOS for the given SR number
-
-printf "File: "; read f;
-p=$(realpath "${f}");
-[ ! -f "${p}" ] && echo "Not a file." && return 1;
-printf "SR: "; read s;
-printf "Login: "; read l;
-u="https://transport.oracle.com/upload/issue/${s}/";
-${CURLCMD} --verbose --progress-bar --user ${l} --upload-file "${p}" ${u};
-=======
 # upload a file to MOS for the given SR number
 # success message is "* We are completely uploaded and fine"
 
@@ -25,4 +12,3 @@ echo "Upload file to MOS ..."; \
 	echo -n "Login [${l}]: "; read t; l=${t:-${l}}; \
 	u="https://transport.oracle.com/upload/issue/${s}/"; \
 curl --verbose --progress-bar --user ${l} --upload-file "${p}" ${u};
->>>>>>> 7d32155251d07b4d04f6efe76dd97a80f0f74a31
