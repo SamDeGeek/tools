@@ -59,9 +59,14 @@ git_
 
 
 # check for tmux and if not already in a tmux session
+# check for tmux and if not already in a tmux session
 tmux_ () {
 	TMUXCMD="$(which tmux)"
-	[ -z "${TMUX}" ] && [ -x "${TMUXCMD}" ] && ${TMUXCMD} new -A -s default
+	if [ -z "${TMUX}" ] && [ -x "${TMUXCMD}" ]; then
+		${TMUXCMD} -V
+		${TMUXCMD} ls
+		echo "To connect to default session, use ${TMUXCMD} new -A -s default"
+	fi
 }
 tmux_
 
